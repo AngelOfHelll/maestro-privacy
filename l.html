@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maestro – Topluluk leveli</title>
+<meta name="description" content="Open a Maestro community level in the game.">
+<meta name="robots" content="noindex">
+<style>
+:root{--ink:#0f141b;--board:#2b3443;--board2:#1d2430;--yellow:#ffc928;--orange:#ff9f1c;--teal:#178a7c;--teal2:#0f5f55;--txt:#e8eef4;--mut:#b9c4d3}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:repeating-linear-gradient(90deg,#2b8746 0 64px,#237639 64px 128px);color:var(--txt);font:600 16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px 16px}
+main{width:min(420px,100%);background:var(--board);border:3px solid var(--ink);border-radius:24px;box-shadow:inset 0 -6px 0 var(--board2),0 5px 0 var(--ink),0 16px 36px rgba(0,0,0,.35);padding:24px 20px 20px;display:flex;flex-direction:column;gap:14px;text-align:center}
+.logo{margin:0;font:900 40px/1 "Arial Rounded MT Bold",system-ui,sans-serif;letter-spacing:1px;color:#fff;text-shadow:3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),0 5px 0 #d38a00}
+.kick{margin:4px 0 0;font:800 13px/1.2 system-ui,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:var(--orange)}
+h1{margin:0;font:800 24px/1.25 system-ui,sans-serif;color:#fff;overflow-wrap:anywhere;text-wrap:balance}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px 16px;border-radius:16px;border:3px solid var(--ink);font:800 18px/1.1 system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.go{background:var(--yellow);color:var(--ink);box-shadow:inset 0 -5px 0 #d39b00,0 3px 0 var(--ink)}
+.get{background:var(--teal);color:#fff;box-shadow:inset 0 -5px 0 var(--teal2),0 3px 0 var(--ink)}
+.btn:active{transform:translateY(2px)}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.how{margin:0;font:600 14px/1.5 system-ui,sans-serif;color:var(--mut)}
+.code{font:700 12px/1.4 ui-monospace,Menlo,monospace;color:var(--mut);opacity:.7;margin:0}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <p class="logo">MAESTRO</p>
+    <p class="kick" id="kick">Topluluk leveli</p>
+  </div>
+  <h1 id="title">Bir arkadaşın seni bu levele çağırdı</h1>
+  <a class="btn go" id="open" href="#"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8v14.4L19 12z" fill="currentColor"/></svg><span id="openL">Oyunda aç</span></a>
+  <a class="btn get" id="get" href="https://play.google.com/store/apps/details?id=com.maestrogaming.maestro"><span id="getL">Google Play'den indir</span></a>
+  <p class="how" id="how">Oyun telefonunda yüklüyse “Oyunda aç”a bas, level hemen açılır. Yüklü değilse önce oyunu indir, sonra bu sayfaya dönüp tekrar bas.</p>
+  <p class="code" id="code"></p>
+</main>
+<script>
+(function(){
+  var P=new URLSearchParams(location.search),id=(P.get('id')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,40),t=(P.get('t')||'').slice(0,60),
+      l=(P.get('l')||navigator.language||'en').slice(0,2).toLowerCase(),PKG='com.maestrogaming.maestro',STORE='https://play.google.com/store/apps/details?id='+PKG;
+  var T={tr:{kick:'Topluluk leveli',title:'Bir arkadaşın seni bu levele çağırdı',open:'Oyunda aç',get:"Google Play'den indir",how:'Oyun telefonunda yüklüyse “Oyunda aç”a bas, level hemen açılır. Yüklü değilse önce oyunu indir, sonra bu sayfaya dönüp tekrar bas.',bad:'Bu bağlantıda level yok.'},
+         en:{kick:'Community level',title:'A friend invited you to this level',open:'Open in the game',get:'Get it on Google Play',how:'If the game is on your phone, tap “Open in the game” and the level opens. If not, install it first, then come back to this page and tap again.',bad:'This link has no level in it.'}};
+  var L=T[l]||T.en;document.documentElement.lang=T[l]?l:'en';
+  document.getElementById('kick').textContent=L.kick;document.getElementById('openL').textContent=L.open;document.getElementById('getL').textContent=L.get;document.getElementById('how').textContent=L.how;
+  document.getElementById('title').textContent=t?('“'+t+'”'):L.title;document.title='Maestro – '+(t||L.kick);
+  var open=document.getElementById('open');
+  if(!id){open.style.display='none';document.getElementById('how').textContent=L.bad;return;}
+  var android=/android/i.test(navigator.userAgent);
+  var deep='maestro://level?id='+encodeURIComponent(id);
+  var intent='intent://level?id='+encodeURIComponent(id)+'#Intent;scheme=maestro;package='+PKG+';S.browser_fallback_url='+encodeURIComponent(STORE)+';end';
+  open.href=android?intent:deep;
+  document.getElementById('code').textContent='#'+id;
+  // on Android, try once right away: the game opens on the level, or Google Play opens if it is not installed
+  var tried=false;try{tried=!!sessionStorage.getItem('tried-'+id);sessionStorage.setItem('tried-'+id,'1');}catch(e){}
+  if(android&&!tried)setTimeout(function(){location.href=intent;},350);
+})();
+</script>
+</body>
+</html>
