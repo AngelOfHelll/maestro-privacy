@@ -39,17 +39,17 @@ h1{margin:0;font:800 24px/1.25 system-ui,sans-serif;color:#fff;overflow-wrap:any
 </main>
 <script>
 (function(){
-  var P=new URLSearchParams(location.search),id=(P.get('id')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,40),plan=(P.get('plan')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,6000),t=(P.get('t')||'').slice(0,60),
+  var P=new URLSearchParams(location.search),id=(P.get('id')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,40),plan=(P.get('plan')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,6000),usr=(P.get('u')||'').slice(0,30),t=(P.get('t')||'').slice(0,60),
       l=(P.get('l')||navigator.language||'en').slice(0,2).toLowerCase(),PKG='com.maestrogaming.maestro',STORE='https://play.google.com/store/apps/details?id='+PKG;
-  var T={tr:{kickP:'Paylaşılan plan',titleP:'Bir arkadaşın golünün planını paylaştı',kick:'Topluluk leveli',title:'Bir arkadaşın seni bu levele çağırdı',open:'Oyunda aç',get:"Google Play'den indir",how:'Oyun telefonunda yüklüyse “Oyunda aç”a bas, level hemen açılır. Yüklü değilse önce oyunu indir, sonra bu sayfaya dönüp tekrar bas.',bad:'Bu bağlantıda level yok.'},
-         en:{kickP:'Shared plan',titleP:'A friend shared the plan of a goal',kick:'Community level',title:'A friend invited you to this level',open:'Open in the game',get:'Get it on Google Play',how:'If the game is on your phone, tap “Open in the game” and the level opens. If not, install it first, then come back to this page and tap again.',bad:'This link has no level in it.'}};
+  var T={tr:{kickU:'Oyuncu profili',titleU:'Seni Maestro’da arkadaş olarak eklemek istiyor',kickP:'Paylaşılan plan',titleP:'Bir arkadaşın golünün planını paylaştı',kick:'Topluluk leveli',title:'Bir arkadaşın seni bu levele çağırdı',open:'Oyunda aç',get:"Google Play'den indir",how:'Oyun telefonunda yüklüyse “Oyunda aç”a bas, level hemen açılır. Yüklü değilse önce oyunu indir, sonra bu sayfaya dönüp tekrar bas.',bad:'Bu bağlantıda level yok.'},
+         en:{kickU:'Player profile',titleU:'wants to be your friend in Maestro',kickP:'Shared plan',titleP:'A friend shared the plan of a goal',kick:'Community level',title:'A friend invited you to this level',open:'Open in the game',get:'Get it on Google Play',how:'If the game is on your phone, tap “Open in the game” and the level opens. If not, install it first, then come back to this page and tap again.',bad:'This link has no level in it.'}};
   var L=T[l]||T.en;document.documentElement.lang=T[l]?l:'en';
-  document.getElementById('kick').textContent=plan?L.kickP:L.kick;document.getElementById('openL').textContent=L.open;document.getElementById('getL').textContent=L.get;document.getElementById('how').textContent=L.how;
-  document.getElementById('title').textContent=t?('“'+t+'”'):(plan?L.titleP:L.title);document.title='Maestro – '+(t||(plan?L.kickP:L.kick));
+  document.getElementById('kick').textContent=usr?L.kickU:(plan?L.kickP:L.kick);document.getElementById('openL').textContent=L.open;document.getElementById('getL').textContent=L.get;document.getElementById('how').textContent=L.how;
+  document.getElementById('title').textContent=usr?((t||usr)+' — '+L.titleU):(t?('“'+t+'”'):(plan?L.titleP:L.title));document.title='Maestro – '+(t||(plan?L.kickP:L.kick));
   var open=document.getElementById('open');
-  if(!id&&!plan){open.style.display='none';document.getElementById('how').textContent=L.bad;return;}
+  if(!id&&!plan&&!usr){open.style.display='none';document.getElementById('how').textContent=L.bad;return;}
   var android=/android/i.test(navigator.userAgent);
-  var path=plan?('plan?d='+plan):('level?id='+encodeURIComponent(id)),key=plan?plan.slice(0,24):id;
+  var path=usr?('user?n='+encodeURIComponent(usr)):(plan?('plan?d='+plan):('level?id='+encodeURIComponent(id))),key=usr?('u'+usr):(plan?plan.slice(0,24):id);
   var deep='maestro://'+path;
   var intent='intent://'+path+'#Intent;scheme=maestro;package='+PKG+';S.browser_fallback_url='+encodeURIComponent(STORE)+';end';
   open.href=android?intent:deep;
